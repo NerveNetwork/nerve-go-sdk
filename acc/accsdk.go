@@ -5,6 +5,7 @@ package acc
 
 import (
 	"encoding/hex"
+	"errors"
 	"github.com/niels1286/nerve-go-sdk/crypto/base58"
 	"github.com/niels1286/nerve-go-sdk/crypto/eckey"
 	cryptoutils "github.com/niels1286/nerve-go-sdk/crypto/utils"
@@ -32,7 +33,7 @@ type AccountSDK interface {
 	ValidAddress(address string) error
 
 	GetAddressByPubBytes(bytes []byte, accountType uint8) []byte
-
+	GetAccountByEckey(ec *eckey.EcKey) (Account, error)
 	GetStringAddress(bytes []byte) string
 }
 
@@ -54,18 +55,18 @@ func (sdk *NerveAccountSDK) CreateAccount() (Account, error) {
 	if err != nil {
 		return nil, err
 	}
-	return sdk.getAccountByEckey(ec, sdk.chainId, sdk.prefix)
+	return sdk.GetAccountByEckey(ec)
 }
 
 //根据EcKey生成账户
-func (sdk *NerveAccountSDK) getAccountByEckey(ec *eckey.EcKey, chainId uint16, prefix string) (Account, error) {
+func (sdk *NerveAccountSDK) GetAccountByEckey(ec *eckey.EcKey) (Account, error) {
 	pubBytes := ec.GetPubKeyBytes(true)
 	addressBytes := sdk.GetAddressByPubBytes(pubBytes, NormalAccountType)
 	address := sdk.GetStringAddress(addressBytes)
 	return &NerveAccount{
 		addr:      address,
-		prefix:    prefix,
-		chainId:   chainId,
+		prefix:    sdk.prefix,
+		chainId:   sdk.chainId,
 		prikeyHex: ec.GetPriKeyHex(),
 		pubkeyHex: hex.EncodeToString(pubBytes),
 		accType:   NormalAccountType,
@@ -106,7 +107,48 @@ func (sdk *NerveAccountSDK) GetAddressByPubBytes(bytes []byte, accountType uint8
 	return addressBytes
 }
 
+const message = "The address is not valid"
+
 func (sdk *NerveAccountSDK) ValidAddress(address string) error {
-	//todo
+	if address == "" {
+		return errors.New(message)
+	}
+	prefix, realAddressStr, err := getRealAddress(address)
+	if nil != err {
+		return err
+	}
+	bytes := base58.Decode(realAddressStr)
+	//长度必须正确，默认长度+一个校验位（xor）
+	if len(bytes) != AddressBytesLength+1 {
+		return errors.New(message)
+	}
+	chainId := mathutils.BytesToUint16(bytes[0:2])
+	//验证已知链的前缀是否正确
+	if chainId == sdk.chainId && prefix != sdk.prefix {
+		return errors.New(message)
+	}
+	accountType := bytes[2]
+	if accountType > P2SHAccountType {
+		return errors.New(message)
+	}
+	addressBytes := bytes[0 : len(bytes)-1]
+	xor := calcXor(addressBytes)
+	if xor != bytes[len(bytes)-1] {
+		//校验位不正确
+		return errors.New(message)
+	}
 	return nil
+}
+
+//去除前缀，获得真正的地址字符串
+func getRealAddress(address string) (string, string, error) {
+	for index, c := range address {
+		if index == 0 {
+			continue
+		}
+		if c >= 97 {
+			return address[0:index], address[index+1:], nil
+		}
+	}
+	return "", "", errors.New(message)
 }

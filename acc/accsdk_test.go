@@ -4,6 +4,7 @@
 package acc
 
 import (
+	"github.com/niels1286/nerve-go-sdk/crypto/eckey"
 	"log"
 	"reflect"
 	"strings"
@@ -76,6 +77,11 @@ func TestNerveAccountSDK_CreateAccount(t *testing.T) {
 			if !reflect.DeepEqual(sdk.GetAddressByPubBytes(got.GetPubKey(), NormalAccountType), got.GetAddrBytes()) {
 				t.Errorf("CreateAccount() got is wrong")
 			}
+			ecKey, _ := eckey.FromPriKeyBytes(got.GetPriKey())
+			newWant, _ := sdk.GetAccountByEckey(ecKey)
+			if !reflect.DeepEqual(got, newWant) {
+				t.Errorf("CreateAccount() got is wrong")
+			}
 
 			log.Println(got.GetAddr())
 		})
@@ -96,7 +102,10 @@ func TestNerveAccountSDK_ValidAddress(t *testing.T) {
 		args    args
 		wantErr bool
 	}{
-		// TODO: Add test cases.
+		{"NULS", fields{chainId: 1, prefix: "NULS"}, args{address: "NULSd6HgcCrxrHjARG6Uhhu1kjEpXWqysfD7J"}, false},
+		{"NULS-false", fields{chainId: 1, prefix: "NULS"}, args{address: "NULSd6HgcCrxrHjARG6UhwerkjEpXWqysfD7J"}, true},
+		{"NERVE", fields{chainId: 9, prefix: "NERVE"}, args{address: "NERVEepb6FhfgWLyqHUQgHoHwRGuw3huvchBus"}, false},
+		{"NERVE-false", fields{chainId: 9, prefix: "NERVE"}, args{address: "NERVEepb6FhfgWLsdfsdfsdfedfuw3huvchBus"}, true},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
