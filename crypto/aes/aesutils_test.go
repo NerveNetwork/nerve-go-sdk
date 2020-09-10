@@ -22,8 +22,8 @@ package aesutils
 
 import (
 	"encoding/hex"
-	cryptoutils "github.com/niels1286/nuls-go-sdk/crypto/utils"
-	"github.com/niels1286/nuls-go-sdk/utils/assert"
+	cryptoutils "github.com/niels1286/nerve-go-sdk/crypto/utils"
+	"github.com/niels1286/nerve-go-sdk/utils/assert"
 	"testing"
 )
 

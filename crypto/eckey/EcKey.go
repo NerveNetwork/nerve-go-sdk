@@ -24,7 +24,7 @@ import (
 	"encoding/hex"
 	"errors"
 	"github.com/btcsuite/btcd/btcec"
-	"github.com/niels1286/nuls-go-sdk/utils/mathutils"
+	"github.com/niels1286/nerve-go-sdk/utils/mathutils"
 	"log"
 	"math/big"
 )

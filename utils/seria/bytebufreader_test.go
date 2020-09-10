@@ -26,7 +26,7 @@ package seria
 
 import (
 	"encoding/hex"
-	"github.com/niels1286/nuls-go-sdk/utils/mathutils"
+	"github.com/niels1286/nerve-go-sdk/utils/mathutils"
 	"math/big"
 	"reflect"
 	"testing"

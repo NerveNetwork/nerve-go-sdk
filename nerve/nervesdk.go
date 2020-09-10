@@ -22,6 +22,7 @@ func GetSDK(apiUrl string, chainId uint16, addressPrefix string) *NerveSDK {
 		chainId: chainId,
 		prefix:  addressPrefix,
 	}
+	sdk.AccountSDK = acc.GetAccountSDK(chainId, addressPrefix)
 	return sdk
 }
 
