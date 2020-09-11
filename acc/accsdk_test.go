@@ -106,6 +106,7 @@ func TestNerveAccountSDK_ValidAddress(t *testing.T) {
 		{"NULS-false", fields{chainId: 1, prefix: "NULS"}, args{address: "NULSd6HgcCrxrHjARG6UhwerkjEpXWqysfD7J"}, true},
 		{"NERVE", fields{chainId: 9, prefix: "NERVE"}, args{address: "NERVEepb6FhfgWLyqHUQgHoHwRGuw3huvchBus"}, false},
 		{"NERVE-false", fields{chainId: 9, prefix: "NERVE"}, args{address: "NERVEepb6FhfgWLsdfsdfsdfedfuw3huvchBus"}, true},
+		{"NERVE-false2", fields{chainId: 9, prefix: "NERVE"}, args{address: "ASDFASDFASDFASDFASDF"}, true},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -135,6 +136,39 @@ func Test_calcXor(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			if got := calcXor(tt.args.bytes); got != tt.want {
 				t.Errorf("calcXor() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func Test_getRealAddress(t *testing.T) {
+	type args struct {
+		address string
+	}
+	tests := []struct {
+		name    string
+		args    args
+		want    string
+		want1   string
+		wantErr bool
+	}{
+		{"NULS", args{"NULSd6HgeTTm2pssKHakh29fNW4t98DDZ4KVR"}, "NULS", "6HgeTTm2pssKHakh29fNW4t98DDZ4KVR", false},
+		{"Nerve", args{"NERVEepb6Chtj1NEaxu8VC5LqojAoxknX4RExF"}, "NERVE", "pb6Chtj1NEaxu8VC5LqojAoxknX4RExF", false},
+		{"tNerve", args{"TNVTdTSPVtySemdyntG2UHCbTGWyHycn2aHET"}, "TNVT", "TSPVtySemdyntG2UHCbTGWyHycn2aHET", false},
+		{"error", args{"ASDFASDFASDFASDFSADFASDF"}, "", "", true},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got, got1, err := getRealAddress(tt.args.address)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("getRealAddress() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if got != tt.want {
+				t.Errorf("getRealAddress() got = %v, want %v", got, tt.want)
+			}
+			if got1 != tt.want1 {
+				t.Errorf("getRealAddress() got1 = %v, want %v", got1, tt.want1)
 			}
 		})
 	}

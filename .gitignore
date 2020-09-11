@@ -1,2 +1,5 @@
 /.idea/
 /logs/
+go.sum
+cover.out
+coverage.html
