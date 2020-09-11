@@ -11,6 +11,7 @@ import (
 	cryptoutils "github.com/niels1286/nerve-go-sdk/crypto/utils"
 	"github.com/niels1286/nerve-go-sdk/utils/mathutils"
 	"math/big"
+	"regexp"
 )
 
 const (
@@ -31,7 +32,9 @@ type AccountSDK interface {
 	CreateAccount() (Account, error)
 	ImportAccount(prikey []byte) (Account, error)
 	ValidAddress(address string) error
-
+	ImportKeyStore(keyStoreJson string, password string) (Account, error)
+	CreateKeyStoreByPrikey(prikey []byte, password string) (*KeyStore, error)
+	CreateKeyStore(account Account, password string) (*KeyStore, error)
 	GetAddressByPubBytes(bytes []byte, accountType uint8) []byte
 	GetAccountByEckey(ec *eckey.EcKey) (Account, error)
 	GetStringAddress(bytes []byte) string
@@ -156,4 +159,33 @@ func getRealAddress(address string) (string, string, error) {
 		}
 	}
 	return "", "", errors.New(message)
+}
+
+//校验密码是否满足格式要求，如果不满足则返回false。
+//密码至少8位，必须包含字母和数字
+func (sdk *NerveAccountSDK) PasswordCheck(password string) bool {
+	if password == "" {
+		return false
+	}
+	length := len(password)
+	if length < 8 || length > 20 {
+		return false
+	}
+	reg, _ := regexp.Compile("(.*)[a-zA-Z](.*)")
+	if !reg.MatchString(password) {
+		return false
+	}
+	reg, _ = regexp.Compile("(.*)\\d+(.*)")
+	if !reg.MatchString(password) {
+		return false
+	}
+	reg, _ = regexp.Compile("(.*)\\s+(.*)")
+	if reg.MatchString(password) {
+		return false
+	}
+	reg, _ = regexp.Compile("(.*)[\u4e00-\u9fa5\u3000]+(.*)")
+	if reg.MatchString(password) {
+		return false
+	}
+	return true
 }
