@@ -29,7 +29,7 @@ var PrefixTable = [...]string{"", "a", "b", "c", "d", "e", "f", "g", "h", "i", "
 
 type AccountSDK interface {
 	CreateAccount() (Account, error)
-
+	ImportAccount(prikey []byte) (Account, error)
 	ValidAddress(address string) error
 
 	GetAddressByPubBytes(bytes []byte, accountType uint8) []byte
@@ -51,7 +51,12 @@ func GetAccountSDK(chainId uint16, prefix string) AccountSDK {
 }
 
 func (sdk *NerveAccountSDK) CreateAccount() (Account, error) {
-	ec, err := eckey.NewEcKey()
+	ec, _ := eckey.NewEcKey()
+	return sdk.GetAccountByEckey(ec)
+}
+
+func (sdk *NerveAccountSDK) ImportAccount(prikey []byte) (Account, error) {
+	ec, err := eckey.FromPriKeyBytes(prikey)
 	if err != nil {
 		return nil, err
 	}
