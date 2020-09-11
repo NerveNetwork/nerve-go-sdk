@@ -198,7 +198,6 @@ func TestNerveAccountSDK_ImportAccount(t *testing.T) {
 	}{
 		{"test1", fields{chainId: 9, prefix: "NERVE"}, args{"00"}, "", true},
 		{"test1", fields{chainId: 9, prefix: "NERVE"}, args{"01"}, "", true},
-
 		{"test1", fields{chainId: 1, prefix: "NULS"}, args{"602bec1904be78c646fe4f5c00f04cab6164be5ff80a48846b4afa0c96a76c25"}, "NULSd6HgeZEv2iqBKgpbnLAF8NFDav4LFeG55", false},
 		{"test1", fields{chainId: 1, prefix: "NULS"}, args{"0e50110b30b24280622f5e8e8911d5e55efb89d476b8d9242448841857f0524c"}, "NULSd6HgcnQJUwQEBGPyRAs7xJyXkw3zEUL55", false},
 		{"test1", fields{chainId: 1, prefix: "NULS"}, args{"fdf0b4bdd8bfb33c641e9b621f676bcc91c7fe541f407323080d35ab21a13668"}, "NULSd6Hgb8zsiaB7sHBMwoNQ5N5UswfihAZ55", false},
