@@ -25,6 +25,8 @@
 package txprotocal
 
 import (
+	"errors"
+	"fmt"
 	cryptoutils "github.com/niels1286/nerve-go-sdk/crypto/utils"
 	"github.com/niels1286/nerve-go-sdk/utils/seria"
 )
@@ -88,7 +90,12 @@ func (t *Transaction) serialize(withSign bool) ([]byte, error) {
 	return writer.Serialize(), nil
 }
 
-func (t *Transaction) Parse(reader *seria.ByteBufReader) error {
+func (t *Transaction) Parse(reader *seria.ByteBufReader) (errResult error) {
+	defer func() {
+		if xerr := recover(); xerr != nil {
+			errResult = errors.New(fmt.Sprint(xerr))
+		}
+	}()
 	txType, err := reader.ReadUint16()
 	if err != nil {
 		return err

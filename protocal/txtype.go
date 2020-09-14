@@ -16,8 +16,8 @@
  *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  *  SOFTWARE.
- *
  */
+
 //@Description 这里列举了所有NULS网络支持的交易类型
 package txprotocal
 
@@ -100,4 +100,92 @@ const (
 
 	//跨链验证人初始化交易
 	TX_TYPE_VERIFIER_INIT = 25
+
+	//token跨链转账
+	CONTRACT_TOKEN_CROSS_TRANSFER = 26
+	//账本注册本来新增资产
+	LEDGER_ASSET_REG_TRANSFER = 27
+
+	//追加节点保证金
+	APPEND_AGENT_DEPOSIT = 28
+
+	// 撤销节点保证金
+	// Cancel agent deposit
+
+	REDUCE_AGENT_DEPOSIT = 29
+
+	// 喂价交易
+	QUOTATION = 30
+
+	// 最终喂价交易
+	FINAL_QUOTATION = 31
+
+	// 批量退出staking交易
+	BATCH_WITHDRAW = 32
+
+	// 合并活期staking记录
+	BATCH_STAKING_MERGE = 33
+
+	// 创建交易对
+	COIN_TRADING = 228
+
+	// 挂单委托
+	TRADING_ORDER = 229
+
+	// 挂单撤销
+	TRADING_ORDER_CANCEL = 230
+
+	// 挂单成交
+	TRADING_DEAL = 231
+
+	// 修改交易对
+	EDIT_COIN_TRADING = 232
+
+	// 撤单交易确认
+	ORDER_CANCEL_CONFIRM = 233
+
+	// 确认 虚拟银行变更交易
+	CONFIRM_CHANGE_VIRTUAL_BANK = 40
+
+	// 虚拟银行变更交易
+	CHANGE_VIRTUAL_BANK = 41
+
+	// 链内充值交易
+	RECHARGE = 42
+
+	// 提现交易
+	WITHDRAWAL = 43
+
+	// 确认提现成功状态交易
+	CONFIRM_WITHDRAWAL = 44
+
+	// 发起提案交易
+	PROPOSAL = 45
+
+	// 对提案进行投票交易
+	VOTE_PROPOSAL = 46
+
+	// 异构链交易手续费补贴
+	DISTRIBUTION_FEE = 47
+
+	// 虚拟银行初始化异构链
+	INITIALIZE_HETEROGENEOUS = 48
+
+	// 异构链合约资产注册等待
+	HETEROGENEOUS_CONTRACT_ASSET_REG_PENDING = 49
+
+	// 异构链合约资产注册完成
+	HETEROGENEOUS_CONTRACT_ASSET_REG_COMPLETE = 50
+
+	// 确认提案执行交易
+	CONFIRM_PROPOSAL = 51
+
+	// 重置异构链(合约)虚拟银行
+	RESET_HETEROGENEOUS_VIRTUAL_BANK = 52
+
+	// 确认重置异构链(合约)虚拟银行
+	CONFIRM_HETEROGENEOUS_RESET_VIRTUAL_BANK = 53
+
+	//修改跨链注册信息
+	REGISTERED_CHAIN_CHANGE = 60
 )

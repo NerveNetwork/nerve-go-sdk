@@ -26,6 +26,8 @@ package txprotocal
 
 import (
 	"encoding/hex"
+	"fmt"
+	"github.com/niels1286/nerve-go-sdk/utils/seria"
 	"testing"
 )
 
@@ -50,6 +52,40 @@ func TestParseTransaction(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			if got := ParseTransaction(tt.args.bytes, tt.args.cursor); got.GetHash().String() != tt.want {
 				t.Errorf("ParseTransaction() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestTransaction_Parse(t1 *testing.T) {
+	type args struct {
+		reader *seria.ByteBufReader
+	}
+	tests := []struct {
+		name    string
+		args    args
+		wantErr bool
+	}{
+		{"test1", args{reader: seria.NewByteBufReader([]byte{1, 2, 3, 4, 5}, 0)}, true},
+	}
+	for _, tt := range tests {
+		t1.Run(tt.name, func(t1 *testing.T) {
+			t := &Transaction{
+				hash:     nil,
+				TxType:   0,
+				Time:     0,
+				Remark:   nil,
+				Extend:   nil,
+				CoinData: nil,
+				SignData: nil,
+			}
+			err := t.Parse(tt.args.reader)
+			if (err != nil) != tt.wantErr {
+				t1.Errorf("Parse() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if tt.wantErr {
+				fmt.Println(err.Error())
 			}
 		})
 	}

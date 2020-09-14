@@ -23,6 +23,7 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"errors"
+	"fmt"
 	cryptoutils "github.com/niels1286/nerve-go-sdk/crypto/utils"
 )
 
@@ -41,8 +42,9 @@ type KeyStore struct {
 
 func (sdk *NerveAccountSDK) ImportFromKeyStore(keyStoreJson string, password string) (account Account, err error) {
 	defer func() {
-		if err := recover(); err != nil {
+		if xerr := recover(); xerr != nil {
 			account = nil
+			err = errors.New(fmt.Sprint(xerr))
 		}
 	}()
 	store := KeyStore{}
