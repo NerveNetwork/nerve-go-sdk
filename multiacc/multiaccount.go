@@ -40,7 +40,7 @@ func (sdk *NerveMultiAccountSDK) CreateMultiAccount(m int, pubkeysHex string) (*
 	}
 	pubkeysHex = strings.TrimSpace(pubkeysHex)
 	pkHexSlice := strings.Split(pubkeysHex, ",")
-	if len(pkHexSlice) < m {
+	if len(pkHexSlice) < m || len(pkHexSlice) > 15 {
 		return nil, errors.New("Incorrect public keys")
 	}
 
