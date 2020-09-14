@@ -3,7 +3,10 @@
 // @Author  Niels  2020/9/10
 package nerve
 
-import "github.com/niels1286/nerve-go-sdk/acc"
+import (
+	"github.com/niels1286/nerve-go-sdk/acc"
+	"github.com/niels1286/nerve-go-sdk/multiacc"
+)
 
 /**
  * 基本工具，封装了所有接口的调用
@@ -13,6 +16,7 @@ type NerveSDK struct {
 	chainId uint16
 	prefix  string
 	acc.AccountSDK
+	multiacc.MultiAccountSDK
 }
 
 //
