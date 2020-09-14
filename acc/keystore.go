@@ -39,9 +39,14 @@ type KeyStore struct {
 	version int
 }
 
-func (sdk *NerveAccountSDK) ImportKeyStore(keyStoreJson string, password string) (Account, error) {
+func (sdk *NerveAccountSDK) ImportFromKeyStore(keyStoreJson string, password string) (account Account, err error) {
+	defer func() {
+		if err := recover(); err != nil {
+			account = nil
+		}
+	}()
 	store := KeyStore{}
-	err := json.Unmarshal([]byte(keyStoreJson), &store)
+	err = json.Unmarshal([]byte(keyStoreJson), &store)
 	if err != nil {
 		return nil, err
 	}
@@ -52,9 +57,17 @@ func (sdk *NerveAccountSDK) ImportKeyStore(keyStoreJson string, password string)
 	if err != nil {
 		return nil, err
 	}
+	err = errors.New("password may be wrong!")
 	pwd := cryptoutils.Sha256h([]byte(password))
 	prikey := cryptoutils.AESDecrypt(data, pwd)
-	return sdk.ImportAccount(prikey)
+	account, err = sdk.ImportAccount(prikey)
+	if nil != err {
+		return account, err
+	}
+	if store.Address != account.GetAddr() {
+		return account, errors.New("Got a different address!")
+	}
+	return account, nil
 }
 
 func (sdk *NerveAccountSDK) CreateKeyStoreByPrikey(prikey []byte, password string) (*KeyStore, error) {

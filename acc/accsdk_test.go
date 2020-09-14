@@ -277,3 +277,39 @@ func TestNerveAccountSDK_GetAddressByPubBytes(t *testing.T) {
 		})
 	}
 }
+
+func TestNerveAccountSDK_PasswordCheck(t *testing.T) {
+	type fields struct {
+		chainId uint16
+		prefix  string
+	}
+	type args struct {
+		password string
+	}
+	tests := []struct {
+		name   string
+		fields fields
+		args   args
+		want   bool
+	}{
+		{"test1", fields{chainId: 5, prefix: "TNVT"}, args{"qwer1234"}, true},
+		{"test1", fields{chainId: 5, prefix: "TNVT"}, args{"qwe"}, false},
+		{"test1", fields{chainId: 5, prefix: "TNVT"}, args{"qweqweqwe"}, false},
+		{"test1", fields{chainId: 5, prefix: "TNVT"}, args{"12345678"}, false},
+		{"test1", fields{chainId: 5, prefix: "TNVT"}, args{""}, false},
+		{"test1", fields{chainId: 5, prefix: "TNVT"}, args{"!@#$%^&*()"}, false},
+		{"test1", fields{chainId: 5, prefix: "TNVT"}, args{"nuls123456"}, true},
+		{"test1", fields{chainId: 5, prefix: "TNVT"}, args{"nuls123!@#$"}, true},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			sdk := &NerveAccountSDK{
+				chainId: tt.fields.chainId,
+				prefix:  tt.fields.prefix,
+			}
+			if got := sdk.PasswordCheck(tt.args.password); got != tt.want {
+				t.Errorf("PasswordCheck() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}

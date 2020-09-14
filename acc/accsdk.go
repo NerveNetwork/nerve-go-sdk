@@ -32,7 +32,7 @@ type AccountSDK interface {
 	CreateAccount() (Account, error)
 	ImportAccount(prikey []byte) (Account, error)
 	ValidAddress(address string) error
-	ImportKeyStore(keyStoreJson string, password string) (Account, error)
+	ImportFromKeyStore(keyStoreJson string, password string) (Account, error)
 	CreateKeyStoreByPrikey(prikey []byte, password string) (*KeyStore, error)
 	CreateKeyStore(account Account, password string) (*KeyStore, error)
 	GetAddressByPubBytes(bytes []byte, accountType uint8) []byte
