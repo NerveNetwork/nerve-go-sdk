@@ -1,7 +1,7 @@
 // @Title
 // @Description
 // @Author  Niels  2020/9/14
-package multiacc
+package multisig
 
 import (
 	"reflect"

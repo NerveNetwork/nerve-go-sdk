@@ -5,7 +5,7 @@ package nerve
 
 import (
 	"github.com/niels1286/nerve-go-sdk/acc"
-	"github.com/niels1286/nerve-go-sdk/multiacc"
+	"github.com/niels1286/nerve-go-sdk/multisig"
 )
 
 /**
@@ -16,7 +16,7 @@ type NerveSDK struct {
 	chainId uint16
 	prefix  string
 	acc.AccountSDK
-	multiacc.MultiAccountSDK
+	multisig.MultiAccountSDK
 }
 
 //
