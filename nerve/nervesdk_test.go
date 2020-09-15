@@ -3,24 +3,14 @@
 // @Author  Niels  2020/9/10
 package nerve
 
-import "testing"
+//获取sdk工具对象
+func ExampleGetSDK() {
+	apiURL := "https://api.nerve.network/jsonrpc" //可以指定字节的节点（节点必须包含api模块）
+	chainId := uint16(9)                          //Nerve主网为：9，测试网为：5，NULS主网为：1，NULS测试网为：2
+	prefix := "NERVE"                             //Nerve主网为：NERVE，测试网为：TNVT，NULS主网为：NULS，NULS测试网为：tNULS
 
-func TestNerveSDK_GetApiUrl(t *testing.T) {
+	sdk := GetSDK(apiURL, chainId, prefix)
 
-	tests := []struct {
-		name string
-		want string
-	}{
-		{"normal", "https://api.nerve.network/jsonrpc"},
-		{"normal", "test"},
-		{"normal", ""},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			sdk := GetSDK(tt.want, 9, "NERVE")
-			if got := sdk.GetApiUrl(); got != tt.want {
-				t.Errorf("GetApiUrl() = %v, want %v", got, tt.want)
-			}
-		})
-	}
+	//use it
+	sdk.GetApiUrl()
 }

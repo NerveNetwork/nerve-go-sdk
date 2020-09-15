@@ -5,6 +5,7 @@ package acc
 
 import (
 	"encoding/hex"
+	"fmt"
 	"github.com/niels1286/nerve-go-sdk/crypto/eckey"
 	"log"
 	"reflect"
@@ -312,4 +313,41 @@ func TestNerveAccountSDK_PasswordCheck(t *testing.T) {
 			}
 		})
 	}
+}
+
+//创建账户，支持NULS生态内任意区块链的账户创建
+func ExampleNerveAccountSDK_CreateAccount() {
+	chainId := uint16(9) //Nerve主网为：9，测试网为：5，NULS主网为：1，NULS测试网为：2
+	prefix := "NERVE"    //Nerve主网为：NERVE，测试网为：TNVT，NULS主网为：NULS，NULS测试网为：tNULS
+
+	sdk := GetAccountSDK(chainId, prefix)
+	//创建账户
+	account, err := sdk.CreateAccount()
+	if nil != err {
+		fmt.Println(err.Error())
+		return
+	}
+	fmt.Println("Address:", account.GetAddr())
+	fmt.Println("Private Key:", account.GetPriKeyHex())
+	fmt.Println("Public Key:", account.GetPubKeyHex())
+	fmt.Println("Chain ID:", account.GetChainId())
+}
+
+//使用私钥导入账户，支持NULS生态内任意区块链的账户创建
+func ExampleNerveAccountSDK_ImportAccount() {
+	chainId := uint16(9) //Nerve主网为：9，测试网为：5，NULS主网为：1，NULS测试网为：2
+	prefix := "NERVE"    //Nerve主网为：NERVE，测试网为：TNVT，NULS主网为：NULS，NULS测试网为：tNULS
+
+	sdk := GetAccountSDK(chainId, prefix)
+	//创建账户
+	prikey, _ := hex.DecodeString("602bec1904be78c646fe4f5c00f04cab6164be5ff80a48846b4afa0c96a76c25")
+	account, err := sdk.ImportAccount(prikey)
+	if nil != err {
+		fmt.Println(err.Error())
+		return
+	}
+	fmt.Println("Address:", account.GetAddr())
+	fmt.Println("Private Key:", account.GetPriKeyHex())
+	fmt.Println("Public Key:", account.GetPubKeyHex())
+	fmt.Println("Chain ID:", account.GetChainId())
 }
