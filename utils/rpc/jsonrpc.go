@@ -11,6 +11,10 @@ import (
 	"net/http"
 )
 
+type Client interface {
+	Request(param *RequestParam) (*RequestResult, error)
+}
+
 type JsonRPCClient struct {
 	client *http.Client
 	url    string

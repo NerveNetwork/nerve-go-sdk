@@ -4,9 +4,12 @@
 package api
 
 import (
+	"encoding/hex"
 	"encoding/json"
 	"errors"
+	"github.com/niels1286/nerve-go-sdk/utils/mathutils"
 	"github.com/niels1286/nerve-go-sdk/utils/rpc"
+	"math/big"
 	"math/rand"
 	"time"
 )
@@ -30,6 +33,60 @@ func GetApiSDK(apiURL string, chainId uint16, prefix string) ApiSDK {
 		chainId: chainId,
 		prefix:  prefix,
 	}
+}
+
+type AccountStatus struct {
+	//账户地址
+	Address       string
+	assetsChainId uint16
+	assetsId      uint16
+	//可用余额
+	Balance *big.Int
+	//当前nonce值
+	Nonce []byte
+	//该nonce值的类型，1：已确认的nonce值,0：未确认的nonce值
+	NonceType int
+	//总的余额：可用+锁定
+	TotalBalance *big.Int
+}
+
+func (sdk *NerveApiSDK) GetBalance(address string, chainId uint16, assetsId uint16) (*AccountStatus, error) {
+	if address == "" {
+		return nil, errors.New("parameter wrong.")
+	}
+	rand.Seed(time.Now().Unix())
+	param := sdk.client.NewRequestParam(rand.Intn(10000), "getAccountBalance", []interface{}{sdk.chainId, chainId, assetsId, address})
+	result, err := sdk.ApiRequest(param)
+	if err != nil {
+		return nil, err
+	}
+	if nil == result || nil == result.Result {
+		return nil, errors.New("Get nil result.")
+	}
+	resultMap := result.Result.(map[string]interface{})
+	balance, err := mathutils.StringToBigInt(resultMap["balance"].(string))
+	if err != nil {
+		return nil, err
+	}
+	nonceHex := resultMap["nonce"].(string)
+	nonce, err := hex.DecodeString(nonceHex)
+	if err != nil {
+		return nil, err
+	}
+	nonceType := resultMap["nonceType"].(float64)
+	totalBalance, err := mathutils.StringToBigInt(resultMap["totalBalance"].(string))
+	if err != nil {
+		return nil, err
+	}
+	return &AccountStatus{
+		Address:       address,
+		assetsChainId: chainId,
+		assetsId:      assetsId,
+		Balance:       balance,
+		Nonce:         nonce,
+		NonceType:     int(nonceType),
+		TotalBalance:  totalBalance,
+	}, nil
 }
 
 //广播交易
