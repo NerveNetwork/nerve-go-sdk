@@ -17,6 +17,7 @@ import (
 type ApiSDK interface {
 	Broadcast(txHex string) (string, error)
 	ValidateTx(txHex string) (string, error)
+	GetBalance(address string, chainId uint16, assetsId uint16) (*AccountStatus, error)
 }
 
 type NerveApiSDK struct {
