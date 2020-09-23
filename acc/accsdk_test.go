@@ -351,3 +351,57 @@ func ExampleNerveAccountSDK_ImportAccount() {
 	fmt.Println("Public Key:", account.GetPubKeyHex())
 	fmt.Println("Chain ID:", account.GetChainId())
 }
+
+func TestNerveAccountSDK_GetBytesAddress(t *testing.T) {
+	type fields struct {
+		chainId uint16
+		prefix  string
+	}
+	type args struct {
+		address string
+	}
+	tests := []struct {
+		name    string
+		fields  fields
+		args    args
+		want    string
+		wantErr bool
+	}{
+		{"test-1", fields{chainId: 9, prefix: "NERVE"}, args{"NERVEepb67PB9xWGjpw1wzgoV9W11CZgsuee15"}, "09000169c97d30b4fdbdd40770b64336ef8bbdff87d545", false},
+		{"test-2", fields{chainId: 9, prefix: "NERVE"}, args{"NERVEepb6GTLWpJvzBG2qmQayVBQivgTTBU6E3"}, "090001fd50bf11292f6cd4dda1d9a2d086bd2600ba6762", false},
+		{"test-3", fields{chainId: 9, prefix: "NERVE"}, args{"NERVEepb6DLRrjJs78hu87sRsaxDoqyyEs3BMi"}, "090001ca9763378cbcb94740029be3a8cc631e60bffa60", false},
+		{"test-4", fields{chainId: 9, prefix: "NERVE"}, args{"NERVEepb69wSvKfYvVbqQ8LbHzuwrbJMf9h9cY"}, "090001935c44c8802ab4cff4c776f0c40868c27acfe839", false},
+		{"test-5", fields{chainId: 9, prefix: "NERVE"}, args{"NERVEepb69ufDrd6ZyXkoaef245TRBYVDmXrVV"}, "09000192dbef97aa568017a95f725c47ba162dc80887c3", false},
+		{"test-6", fields{chainId: 9, prefix: "NERVE"}, args{"NERVEepb67mKfhRAC9dPqHY8fHUYhPW7tYRZvy"}, "0900016fff28a6320ed738c68a72cab898b101121918f8", false},
+		{"test-7", fields{chainId: 9, prefix: "NERVE"}, args{"NERVEepb68aveD5dMBWHq4kvU2TrfuPcQHYcJK"}, "0900017d580c36e399d747dbc72faba1225319c88aac92", false},
+		{"test-8", fields{chainId: 9, prefix: "NERVE"}, args{"NERVEepb6C4cQ777E3afTPyoA6TdMDgDpbwVHq"}, "090001b5e4cc45ae0e2e24d61db3190455f579583ae175", false},
+		{"test-9", fields{chainId: 9, prefix: "NERVE"}, args{"NERVEepb65U7Nyg28BXzur59Ctg27AzGFxQLaH"}, "0900014aa55d4abdfdc789222828de132c927f2e934e1d", false},
+		{"test-0", fields{chainId: 9, prefix: "NERVE"}, args{"NERVEepb61mKgUDpt8ELK9h2gZ4i1Bd9H5Wxz7"}, "0900010e6c22d6a520601b3855ef9814a60c9c3ddadd16", false},
+		{"test-5-1", fields{chainId: 5, prefix: "TNVT"}, args{"TNVTdTSPRYuXYDgWZVMLDwr6bRWzwjBk5mwAH"}, "050001b5c59b0ee084a8c604e67da1b4148b5342ecd9e8", false},
+		{"test-5-2", fields{chainId: 5, prefix: "TNVT"}, args{"TNVTdTSPJYNowzMYVjVnhbMTHqVK6hwi4EPNu"}, "05000143c960ffcd75b318f0b6a3e9fdcccaa537b52296", false},
+		{"test-5-3", fields{chainId: 5, prefix: "TNVT"}, args{"TNVTdTSPRzFex3N1vJXyKEi9Fp6iARphNMFYi"}, "050001bce0fc81aa29a0e03f1788acd0669897b44ac43e", false},
+		{"test-5-4", fields{chainId: 5, prefix: "TNVT"}, args{"TNVTdTSPP5Nk4ouLGfMq2hQJje5dgi9CS7DaJ"}, "0500018d872215cb7d52f897eb1a859145abd6618ca73e", false},
+		{"test-5-5", fields{chainId: 5, prefix: "TNVT"}, args{"TNVTdTSPPbT9Sqpu9bcy5SYUFEKU1w2NFTNZf"}, "05000195f5f29de657ee60573b2461d2315b00bc035beb", false},
+		{"test-5-6", fields{chainId: 5, prefix: "TNVT"}, args{"TNVTdTSPMLAwFpT59qgEe6YyAgfUhJw3prx9V"}, "0500017126db812887ff027d2f8c8d9cf41ef15a7db991", false},
+		{"test-5-7", fields{chainId: 5, prefix: "TNVT"}, args{"TNVTdTSPRG85jT4r3JGnGgst2XMN9xgvEx4sD"}, "050001b110e72af1d9951fe89c0a92fca34b9c1d49aac4", false},
+		{"test-5-8", fields{chainId: 5, prefix: "TNVT"}, args{"TNVTdTSPLbnCkPv4DzRPDYUu2TkpxhiqVA1Ev"}, "0500016544032a201f775d9143a5f1ce6dd8907e6f1df7", false},
+		{"test-5-9", fields{chainId: 5, prefix: "TNVT"}, args{"TNVTdTSPNtTnhe8JYrxJyMjNpM6Rm32WW7UDG"}, "0500018a77cf53b1a1846f6ee64569917b2364fa81346b", false},
+		{"test-5-0", fields{chainId: 5, prefix: "TNVT"}, args{"TNVTdTSPQ3xKrPtQiqSEbWt6vDrNTMnnxxNQQ"}, "0500019d644f2a381a7eeafd6bacf4f36a984c79e754ce", false},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			sdk := &NerveAccountSDK{
+				chainId: tt.fields.chainId,
+				prefix:  tt.fields.prefix,
+			}
+			got, err := sdk.GetBytesAddress(tt.args.address)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("GetBytesAddress() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if tt.want != hex.EncodeToString(got) {
+				t.Errorf("GetBytesAddress() got = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}

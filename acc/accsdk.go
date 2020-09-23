@@ -38,6 +38,7 @@ type AccountSDK interface {
 	GetAddressByPubBytes(bytes []byte, accountType uint8) []byte
 	GetAccountByEckey(ec *eckey.EcKey) (Account, error)
 	GetStringAddress(bytes []byte) string
+	GetBytesAddress(address string) ([]byte, error)
 }
 
 type NerveAccountSDK struct {
@@ -51,6 +52,18 @@ func GetAccountSDK(chainId uint16, prefix string) AccountSDK {
 		prefix:  prefix,
 	}
 	return sdk
+}
+
+func (sdk *NerveAccountSDK) GetBytesAddress(address string) ([]byte, error) {
+	if address == "" {
+		return nil, errors.New(message)
+	}
+	_, realAddressStr, err := getRealAddress(address)
+	if nil != err {
+		return nil, err
+	}
+	bytes := base58.Decode(realAddressStr)
+	return bytes[0 : len(bytes)-1], nil
 }
 
 func (sdk *NerveAccountSDK) CreateAccount() (Account, error) {
