@@ -13,9 +13,10 @@ import (
 )
 
 type MultiAccount struct {
-	M       int
-	Pks     string
-	Address string
+	M            int
+	Pks          string
+	Address      string
+	AddressBytes []byte
 }
 type MultiAccountSDK interface {
 	CreateMultiAccount(m int, pubkeysHex string) (*MultiAccount, error)
@@ -67,9 +68,10 @@ func (sdk *NerveMultiAccountSDK) CreateMultiAccount(m int, pubkeysHex string) (*
 	accSDK := acc.GetAccountSDK(sdk.chainId, sdk.prefix)
 	addressBytes := accSDK.GetAddressByPubBytes(bytes, acc.P2SHAccountType)
 	val := &MultiAccount{
-		M:       m,
-		Pks:     pks,
-		Address: accSDK.GetStringAddress(addressBytes),
+		M:            m,
+		Pks:          pks,
+		Address:      accSDK.GetStringAddress(addressBytes),
+		AddressBytes: addressBytes,
 	}
 	return val, nil
 }
