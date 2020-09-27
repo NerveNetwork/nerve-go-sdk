@@ -18,6 +18,7 @@ type ApiSDK interface {
 	Broadcast(txHex string) (string, error)
 	ValidateTx(txHex string) (string, error)
 	GetBalance(address string, chainId uint16, assetsId uint16) (*AccountStatus, error)
+	GetTxJson(txHash string) (string, error)
 }
 
 type NerveApiSDK struct {
@@ -49,6 +50,30 @@ type AccountStatus struct {
 	NonceType int
 	//总的余额：可用+锁定
 	TotalBalance *big.Int
+}
+
+func (sdk *NerveApiSDK) GetTxJson(txHash string) (string, error) {
+	if txHash == "" {
+		return "", errors.New("parameter wrong.")
+	}
+	rand.Seed(time.Now().Unix())
+	param := sdk.client.NewRequestParam(rand.Intn(10000), "getTx", []interface{}{sdk.chainId, txHash})
+	result, err := sdk.ApiRequest(param)
+	if err != nil {
+		return "", err
+	}
+	if nil == result || nil == result.Result {
+		if result != nil && result.Error != nil {
+			bytes, _ := json.Marshal(result.Error)
+			return "", errors.New(string(bytes))
+		}
+		return "", errors.New("Get nil result.")
+	}
+	txJson, err := json.Marshal(result.Result)
+	if err != nil {
+		return "", err
+	}
+	return string(txJson), nil
 }
 
 func (sdk *NerveApiSDK) GetBalance(address string, chainId uint16, assetsId uint16) (*AccountStatus, error) {
