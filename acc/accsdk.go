@@ -39,11 +39,28 @@ type AccountSDK interface {
 	GetAccountByEckey(ec *eckey.EcKey) (Account, error)
 	GetStringAddress(bytes []byte) string
 	GetBytesAddress(address string) ([]byte, error)
+	Sign(account Account, data []byte) ([]byte, error)
+	Verify(pubkey []byte, data []byte, signResult []byte) bool
 }
 
 type NerveAccountSDK struct {
 	chainId uint16
 	prefix  string
+}
+
+func (sdk *NerveAccountSDK) Sign(account Account, data []byte) ([]byte, error) {
+	eckey, err := eckey.FromPriKeyBytes(account.GetPriKey())
+	if err != nil {
+		return nil, err
+	}
+	return eckey.Sign(data)
+}
+func (sdk *NerveAccountSDK) Verify(pubkey []byte, data []byte, signResult []byte) bool {
+	eckey, err := eckey.FromPubKeyBytes(pubkey)
+	if err != nil {
+		return false
+	}
+	return eckey.Verify(data, signResult)
 }
 
 func GetAccountSDK(chainId uint16, prefix string) AccountSDK {
