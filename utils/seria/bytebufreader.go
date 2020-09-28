@@ -66,7 +66,8 @@ func (reader *ByteBufReader) ReadBytes(length int) ([]byte, error) {
 	if !reader.canRead(length) {
 		return []byte{}, nil
 	}
-	bytes := reader.payload[reader.cursor : reader.cursor+length]
+	bytes := make([]byte, length)
+	copy(bytes, reader.payload[reader.cursor:reader.cursor+length])
 	reader.cursor += length
 	return bytes, nil
 }
