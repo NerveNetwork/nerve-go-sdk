@@ -19,6 +19,7 @@ type NerveSDK struct {
 	acc.AccountSDK
 	multisig.MultiAccountSDK
 	api.ApiSDK
+	api.PSSDK
 }
 
 //
@@ -31,6 +32,7 @@ func GetSDK(apiUrl string, chainId uint16, addressPrefix string) *NerveSDK {
 	sdk.AccountSDK = acc.GetAccountSDK(chainId, addressPrefix)
 	sdk.MultiAccountSDK = multisig.GetAccountSDK(chainId, addressPrefix)
 	sdk.ApiSDK = api.GetApiSDK(apiUrl, chainId, addressPrefix)
+	sdk.PSSDK = api.GetPSSDK(chainId, addressPrefix)
 	return sdk
 }
 
