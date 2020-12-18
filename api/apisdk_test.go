@@ -17,3 +17,13 @@ func TestNerveApiSDK_GetBalance(t *testing.T) {
 	}
 	fmt.Println(status)
 }
+
+func TestNerveApiSDK_GetNodeStatus(t *testing.T) {
+	sdk := GetApiSDK("http://127.0.0.1:7004/jsonrpc/", 9, "NERVE")
+	status, err := sdk.GetNodeStatus()
+	if err != nil {
+		fmt.Println(err.Error())
+		return
+	}
+	fmt.Println(status)
+}

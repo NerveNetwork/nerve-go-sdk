@@ -19,6 +19,7 @@ type ApiSDK interface {
 	ValidateTx(txHex string) (string, error)
 	GetBalance(address string, chainId uint16, assetsId uint16) (*AccountStatus, error)
 	GetTxJson(txHash string) (string, error)
+	GetNodeStatus() (*NodeStatus, error)
 }
 
 type NerveApiSDK struct {
@@ -50,6 +51,15 @@ type AccountStatus struct {
 	NonceType int
 	//总的余额：可用+锁定
 	TotalBalance *big.Int
+}
+type NodeStatus struct {
+	LocalBestHeight uint64
+
+	NetBestHeight uint64
+
+	InCount int
+
+	OutCount int
 }
 
 func (sdk *NerveApiSDK) GetTxJson(txHash string) (string, error) {
@@ -162,6 +172,32 @@ func (sdk *NerveApiSDK) ValidateTx(txhex string) (string, error) {
 	resultMap := result.Result.(map[string]interface{})
 	value := resultMap["value"].(string)
 	return value, nil
+}
+
+//接口请求
+//请求的地址是client中的默认地址
+//本工具针对NULS的api模块的jsonrpc接口进行设计，适用范围有限
+func (sdk *NerveApiSDK) GetNodeStatus() (*NodeStatus, error) {
+	param := sdk.client.NewRequestParam(rand.Intn(10000), "network", []interface{}{"info"})
+	result, err := sdk.ApiRequest(param)
+	if err != nil {
+		return nil, err
+	}
+	if nil == result || nil == result.Result {
+		if result != nil && result.Error != nil {
+			bytes, _ := json.Marshal(result.Error)
+			return nil, errors.New(string(bytes))
+		}
+		return nil, errors.New("Get nil result.")
+	}
+	resultMap := result.Result.(map[string]interface{})
+	status := NodeStatus{
+		LocalBestHeight: uint64(resultMap["localBestHeight"].(float64)),
+		NetBestHeight:   uint64(resultMap["netBestHeight"].(float64)),
+		InCount:         int(resultMap["inCount"].(float64)),
+		OutCount:        int(resultMap["outCount"].(float64)),
+	}
+	return &status, nil
 }
 
 //接口请求
