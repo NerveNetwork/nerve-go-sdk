@@ -7,6 +7,7 @@ import (
 	"github.com/niels1286/nerve-go-sdk/acc"
 	"github.com/niels1286/nerve-go-sdk/api"
 	"github.com/niels1286/nerve-go-sdk/multisig"
+	"github.com/niels1286/nerve-go-sdk/txs"
 )
 
 /**
@@ -20,6 +21,7 @@ type NerveSDK struct {
 	multisig.MultiAccountSDK
 	api.ApiSDK
 	api.PSSDK
+	txs.TxSDK
 }
 
 //
@@ -33,6 +35,7 @@ func GetSDK(apiUrl string, chainId uint16, addressPrefix string) *NerveSDK {
 	sdk.MultiAccountSDK = multisig.GetAccountSDK(chainId, addressPrefix)
 	sdk.ApiSDK = api.GetApiSDK(apiUrl, chainId, addressPrefix)
 	sdk.PSSDK = api.GetPSSDK(chainId, addressPrefix)
+	sdk.TxSDK = txs.GetTxSDK(apiUrl, chainId, addressPrefix)
 	return sdk
 }
 
